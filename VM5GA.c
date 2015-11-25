@@ -15,27 +15,28 @@ byte info[] = {0xBB , 0x00, 0x03, 0x00, 0x01, 0x02, 0x06, 0x7E};
 byte china800MHZregion[] = {0xBB,	0x00,	0x07,	0x00,	0x01,	0x04,	0x0C,	0x7E};
 byte freq840MHZ[] = {0xBB, 0x00, 0xAB, 0x00, 0x01, 0x00, 0xAC, 0x7E };
 byte infoResponse[] = {0xBB, 0x01, 0x03, 0x00, 0x08, 0x02, 0x4D, 0x61, 0x67, 0x69, 0x63, 0x52, 0x66, 0xA7, 0X7E};
+byte signalStrength20dm[] = {0xBB, 0x00, 0xB6, 0x00, 0x02, 0x07, 0xD0, 0x8F, 0x7E };
+byte signalStrength26dbm[] ={0xBB, 0x00, 0xB6, 0x00, 0x02, 0x0A, 0x28, 0xEA, 0x7E };
+byte singlePollingCmd[] = {0xBB, 0x00, 0x22, 0x00, 0x00, 0x22, 0x7E};
+byte multiplePollingCmd[] = {0xBB, 0x00, 0x27, 0x00, 0x03, 0x22, 0x00, 0x28, 0x74, 0x7E }; // poll 40 times
 //String infoResponseString = "";
 String readString = "";
 char infoResponse1[] = {0xBB, 0x01, 0x03, 0x00, 0x08, 0x02, 0x4D, 0x61, 0x67, 0x69, 0x63, 0x52, 0x66, 0xA7, 0X7E};
 char china800MHZregionResponse1[] = {0xBB,	0x01,	0x07,	0x00,	0x01,	0x00,	0x09,	0x7E};
 char freq840MHZResponse1[] = {0xBB,	0x01,	0xAB,	0x00,	0x01,	0x00,	0xAD,	0x7E};
+char signalStrength20dmResponse1[] = {0xBB,	0x01,	0xB6,	0x00,	0x01,	0x00,	0xB8,	0x7E};
+char tagID1Response[] ={0xBB, 0x02, 0x22, 0x00, 0x11, 0xC3, 0x30, 0x00,
+		0x34, 0x08, 0x33, 0xB2, 0xDD, 0xD9, 0x01, 0x40,
+		0x00, 0x00, 0x00, 0x00, 0x34, 0x6F, 0xE3, 0x7E };
 
 void setup() {
   // initialize both serial ports:
   Serial.begin(115200);
   Serial2.begin(115200);
   pinMode(8, OUTPUT);   //connected to EN pin
- digitalWrite(8,HIGH);  //make EN pin high
- //Serial.println("Writing info");
- //Serial2.write(info, sizeof(info));
+  digitalWrite(8,HIGH);  //make EN pin high
+  setupVM5GA();          //setup VM5GA
 
- //Serial2.write(info, sizeof(info));
-// for (int i =0;i<sizeof(infoResponse);i++){
-//	 infoResponseString += infoResponse1[i];
- //}
-
- //Serial.println(infoResponseString); //prints string to serial port out
 }
 
 
@@ -46,20 +47,46 @@ void setup() {
 //BB 00 03 00 01 02 06 7E ---> in hex
 //187 000 003 000 001 002 006 126  ---> in decimal
 void loop(){
-    //check if the module is alive.
+  /*  //check if the module is alive.
 	while(!isVM5GAAlive());  //only go ahead if module is alive.
 
 	//clear the VM5GA buffer.
 	clearVM5GABuffer();
+	//rest
+	delay(10);
 
 	//set frequency to 840.125MHz. Not supported in India. (865-867 MHz) need to change !!
-    setFrequency();
+    setFrequencyVM5GA();
 
     //clear the VM5GA buffer.
     clearVM5GABuffer();
+    //rest
+    delay(10);
+
+    //set signal strength to 26dbm.
+    setSignalStrengthVM5GA();
+
+    //clear the VM5GA buffer.
+     clearVM5GABuffer();
+    //rest
+     delay(10);
+
+     //do single polling and see what happens
+     singlePolling();
+     //clear the VM5GA buffer.
+     clearVM5GABuffer();
+     //rest
+     delay(10);
+*/
+     //try multiple polling and see what happens
+     multiplePolling();
+     //clear the VM5GA buffer.
+     clearVM5GABuffer();
+     //rest
+     delay(10);
 
 
-	delay(5000);
+	//delay(1000);
 
 /*
 	while(!isVM5GAAlive());
@@ -221,7 +248,7 @@ void clearVM5GABuffer(){
 
 
 /*FUNCTION NAME:
-  * setFrequency
+  * setFrequencyVM5GA
   *
   * DESCRIPTION:
   * This is used to set the frequency of operation to CHINA 800MHz region.
@@ -233,7 +260,7 @@ void clearVM5GABuffer(){
   * None
   */
 
-void setFrequency(){
+void setFrequencyVM5GA(){
   // first set region to CHINA 800MHZ.
   //	BB	00	07	00	01	(04) C	7E .. 04 for china 800Mhz.
 
@@ -264,3 +291,287 @@ void setFrequency(){
 
 
 }
+
+
+
+/*FUNCTION NAME:
+  * setSignalStrenthVM5GA
+  *
+  * DESCRIPTION:
+  * This sets signal strength of VM5GA to 26dbm.
+  *
+  *
+  * PARAMETERS:
+  * None.
+  *
+  * RETURN VALUES:
+  * None.
+  *
+  */
+
+void setSignalStrengthVM5GA(){
+
+	 //log the info
+	 Serial.println("Setting signal strength to 26dbm");
+     // clear VM5GA buffer first.
+	 clearVM5GABuffer();
+	 Serial2.write(signalStrength26dbm, sizeof(signalStrength26dbm));
+     //check for the response.
+	 if(checkResponseVM5GA(signalStrength20dmResponse1,sizeof(signalStrength20dmResponse1),5000)){
+		 Serial.println("Signal strength set to 26dbm");
+	 }else{
+		 Serial.println("Unable to set signal strength to 26dbm");
+	 }
+
+}
+
+
+
+/*FUNCTION NAME:
+  * singlePolling
+  *
+  * DESCRIPTION:
+  * This function polls the tag one single time.
+  *
+  *
+  * PARAMETERS:
+  * None.
+  *
+  * RETURN VALUES:
+  * None.
+  *
+  */
+
+void singlePolling(){
+
+	 //log the info
+	// Serial.println("Polling one single time");
+     // clear VM5GA buffer first.
+	 clearVM5GABuffer();
+	 Serial2.write(singlePollingCmd, sizeof(singlePollingCmd));
+	 delay(100);
+	 //print the response.
+	 //printResponseofVM5GA();
+     //check for the response.
+	// if(checkResponseVM5GA(tagID1Response,sizeof(tagID1Response),10000)){
+	//	 Serial.println("Tag ID with 34 found");
+	// }else{
+	//	 Serial.println("Tag ID with 34 not found");
+	// }
+	 int tag =0;
+	 tag = readTagVM5GA();
+	 switch (tag) {
+	     case 1:
+	        Serial.println("Tag 0x31 found ");
+	       break;
+	     case 2:
+	    	 Serial.println("Tag 0x32 found ");
+	       break;
+	     case 3:
+	    	 Serial.println("Tag 0x33 found ");
+	    	 break;
+	     case 4:
+	    	 Serial.println("Tag 0x34 found ");
+	    	 break;
+	     default:
+	       // Serial.println("No tag found");
+	     break;
+	   }
+}
+
+
+/*FUNCTION NAME:
+  * multiplePolling
+  *
+  * DESCRIPTION:
+  * This function polls the tag multiple times. (40 here)
+  *
+  *
+  * PARAMETERS:
+  * None.
+  *
+  * RETURN VALUES:
+  * None.
+  *
+  */
+
+void multiplePolling(){
+
+	 //log the info
+	// Serial.println("Multiple polling 40 times");
+     // clear VM5GA buffer first.
+	 clearVM5GABuffer();
+	 Serial2.write(multiplePollingCmd, sizeof(multiplePollingCmd));
+	 delay(20);
+	 //print the response.
+	 //printResponseofVM5GA();
+     //check for the response.
+	// if(checkResponseVM5GA(tagID1Response,sizeof(tagID1Response),10000)){
+	//	 Serial.println("Tag ID with 34 found");
+	// }else{
+	//	 Serial.println("Tag ID with 34 not found");
+	// }
+	 //read 40 times
+	 for(int i=0;i<40;i++){
+	 int tag =0;
+	 tag = readTagVM5GA();
+	 switch (tag) {
+	     case 1:
+	        Serial.println("Tag 0x31 found ");
+	       break;
+	     case 2:
+	    	 Serial.println("Tag 0x32 found ");
+	       break;
+	     case 3:
+	    	 Serial.println("Tag 0x33 found ");
+	    	 break;
+	     case 4:
+	    	 Serial.println("Tag 0x34 found ");
+	    	 break;
+	     default:
+	       // Serial.println("No tag found");
+	     break;
+	   }
+	 }
+}
+
+/*FUNCTION NAME:
+  * printResponseOfVM5GA
+  *
+  * DESCRIPTION:
+  * This function prints the response of VM5GA in readable format.
+  *
+  *
+  * PARAMETERS:
+  * None.
+  *
+  * RETURN VALUES:
+  * None.
+  *
+  */
+
+
+void printResponseofVM5GA(){
+	 while (Serial2.available()) {
+		  delay(10);  //small delay to allow input buffer to fill
+		  char start[] = {0XBB};
+		   char c = Serial2.read();  //gets one byte from serial buffer
+
+		   readString += c;
+		 } //makes the string readString
+
+		 if (readString.length() >0) {
+		   Serial.println(readString); //prints string to serial port out
+		   readString=""; //clears variable for new input
+		 }
+}
+
+
+/*FUNCTION NAME:
+  * readTagValues
+  *
+  * DESCRIPTION:
+  * This function reads tag value with some vahiyaat jugaad. Need to clean this up!!
+  *
+  *
+  * PARAMETERS:
+  * None.
+  *
+  * RETURN VALUES:
+  * tag no.
+  * 1 --- 0x31
+  * 2 --- 0x32
+  * 3 --- 0x33
+  * 4 --- 0x34
+  * 0 --- no valid tag.
+  *
+  */
+
+
+int readTagVM5GA(){
+	int i =0;
+	int tagFound =0;
+	while (Serial2.available()) {
+		delay(5);  //small delay to allow input buffer to fill
+		char badStart[] = {0XBB, 0X01 ,0XFF};
+		char goodStart[] = {0X00}; //PC(LSB) should be zero
+		char tags[] = {0x31, 0x32, 0x33, 0x34};
+		char c = Serial2.read();  //gets one byte from serial buffer
+        if(i==2 && c == badStart[2]){   //there should be a fucking better way to compare , no time hope this shit works.!!
+            break;  //wrong response code from VM5GA.
+        }
+        if(i==7 && c == goodStart[0]){
+        	char c = Serial2.read();
+        	for(int j=0;j<4;j++){
+        		if(c == tags[j]){
+        		//tag found , save the id and break
+        			tagFound = j+1;
+        			break;
+        		}
+        	 }
+        	break;  // breaking here as we have found some tag which is not in the inventory .
+        }
+		i++;
+
+	}
+
+	if(i==2 || i==7){
+	   // read till end of this response i.e till 0x7E
+	   while(Serial2.available()){
+	    	delay(5); //small delay to allow input buffer to fill
+	    	char end[] = {0X7E};
+	    	char c = Serial2.read();
+	    	if(c == end[0]){
+	    		break;
+	    	}
+	    }
+	}
+	return tagFound;
+
+}
+
+
+
+
+/*FUNCTION NAME:
+  * setupVM5GA
+  *
+  * DESCRIPTION:
+  * This function initializes the VM5GA module.
+  * 1)It checks if module is alive.
+  * 2)Sets frequency region to CHINA 800MHz.
+  * 3)Sets frequency to 840.125MHz.
+  * 4)Sets signal strength to 26bdm.
+  *
+  * PARAMETERS:
+  * None.
+  *
+  * RETURN VALUES:
+  * None.
+  *
+  */
+
+void setupVM5GA(){
+
+	 while(!isVM5GAAlive());  //only go ahead if module is alive.
+	 //clear the VM5GA buffer.
+	 clearVM5GABuffer();
+	 //rest
+	 delay(10);
+
+	 //set frequency to 840.125MHz. Not supported in India. (865-867 MHz) need to change !!
+	 setFrequencyVM5GA();
+     //clear the VM5GA buffer.
+	 clearVM5GABuffer();
+	 //rest
+	 delay(10);
+
+	 //set signal strength to 26dbm.
+	 setSignalStrengthVM5GA();
+     //clear the VM5GA buffer.
+	 clearVM5GABuffer();
+	 //rest
+	 delay(10);
+
+}
+
