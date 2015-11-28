@@ -4,11 +4,17 @@
   * We are using local version of data.sparkfun.com for now.
   */
 
+//mere ghar ke liye
 //SSID + KEY
 //const char SSID_ESP[] = "Chucha";
 //const char SSID_KEY[] = "chuchaspeaking";
-const char SSID_ESP[] = "PowerRangers";
-const char SSID_KEY[] = "dhawanisgreat";
+//const char SSID_ESP[] = "PowerRangers";
+//const char SSID_KEY[] = "dhawanisgreat";
+
+
+//for thinqubator
+const char SSID_ESP[] = "Thinqubator";
+const char SSID_KEY[] = "C1sco12345";
 
 
 //connect
@@ -16,9 +22,11 @@ const char connect[]="AT+CWJAP=\"Chucha\",\"chuchaspeaking\"";
 
 
 // URLs
-const char thingsSpeakURL[] = "GET /input/Zr8kAraW8KsPXmy4E8LPFqk7dDk?private_key=ZrJw3rLyJBsonqpmbk0ouMwOWNw&kaand=29.86&phonenumber=21.94&productname=10.59&productprice=7.08 HTTP/1.0\r\n\r\n";
+const char thingsSpeakURL[] = "GET /input/L87zZE13dQu1wB3e3aoeH73rM4ZR?private_key=QQNPMndZ5rIyLaNWNZ4WuLGdY3Z0&kaand=green&phonenumber=12345&productname=Levis&productprice=1999 HTTP/1.0\r\n\r\n";
 //const char thingsSpeakURL[] = "GET /input/K5Vno8g7OAsw3722mkgQt2vDOXQ?private_key=BQ3bgaBVzJHolGKKQbD4T3Q2rXY&field1=34.21 HTTP/1.0\r\n\r\n";
 const char URL_current_temp[] = "GET https://api.thingspeak.com/apps/thinghttp/send_request?api_key=3M27CDHR12NN52V1 HTTP/1.0\r\n\r\n";
+//const char thigsSpeakURL[] = "GET /input/Zr8kAraW8KsPXmy4E8LPFqk7dDk?private_key=ZrJw3rLyJBsonqpmbk0ouMwOWNw&kaand=29.86&phonenumber=21.94&productname=10.59&productprice=7.08 HTTP/1.0\r\n\r\n";
+
 
 //DEFINE KEYWORDS HERE
 const char OK[] = "OK";
@@ -324,15 +332,35 @@ void sendData(){
 		   Serial1.print(payload[i]);
 		   Serial.print(payload[i]);    //log the info
 		}*/
-		for(int i=0; i<150; i++){
+/*		for(int i=0; i<150; i++){
 				   Serial1.print(payload[i]);
 				   Serial.print(payload[i]);    //log the info
 				}
 		Serial1.print("1.0\r\n\r\n");
 		Serial.print("1.0\r\n\r\n");
+*/
+	//now I have fucked up this code and I am going vahiyaat se bhi vahiyyat jugaad.
+		//tag 1 Levi's Jeans.
+/*		Serial.println("Sending Levi's Jeans");
+		Serial.println("GET /input/L87zZE13dQu1wB3e3aoeH73rM4ZR?private_key=QQNPMndZ5rIyLaNWNZ4WuLGdY3Z0&kaand=green&phonenumber=12345&productname=Levis&productprice=1999 HTTP/1.0\r\n\r\n");
+		Serial1.println("GET /input/L87zZE13dQu1wB3e3aoeH73rM4ZR?private_key=QQNPMndZ5rIyLaNWNZ4WuLGdY3Z0&kaand=green&phonenumber=12345&productname=Levis&productprice=1999 HTTP/1.0\r\n\r\n");
 
-	//debugging for now
-/*	//check whether you got success
+		//tag 2 Wrogn Shirt
+		Serial.println("Sending Wrogn shirt");
+		Serial.println("GET /input/L87zZE13dQu1wB3e3aoeH73rM4ZR?private_key=QQNPMndZ5rIyLaNWNZ4WuLGdY3Z0&kaand=green&phonenumber=12345&productname=Wrogn&productprice=2999 HTTP/1.0\r\n\r\n");
+	    Serial1.println("GET /input/L87zZE13dQu1wB3e3aoeH73rM4ZR?private_key=QQNPMndZ5rIyLaNWNZ4WuLGdY3Z0&kaand=green&phonenumber=12345&productname=Wrogn&productprice=2999 HTTP/1.0\r\n\r\n");
+
+	    //tag 3 Arrow Shirt
+	    Serial.println("Sending Arrow shirt");
+	    Serial.println("GET /input/L87zZE13dQu1wB3e3aoeH73rM4ZR?private_key=QQNPMndZ5rIyLaNWNZ4WuLGdY3Z0&kaand=green&phonenumber=12345&productname=Arrow&productprice=3999 HTTP/1.0\r\n\r\n");
+	    Serial1.println("GET /input/L87zZE13dQu1wB3e3aoeH73rM4ZR?private_key=QQNPMndZ5rIyLaNWNZ4WuLGdY3Z0&kaand=green&phonenumber=12345&productname=Arrow&productprice=3999 HTTP/1.0\r\n\r\n");
+*/
+	    //tag 4 Leee Shirt
+	    Serial.println("Sending Leeee shirt");
+	    Serial.println("GET /input/L87zZE13dQu1wB3e3aoeH73rM4ZR?private_key=QQNPMndZ5rIyLaNWNZ4WuLGdY3Z0&kaand=green&phonenumber=12345&productname=Leeee&productprice=4999 HTTP/1.0\r\n\r\n");
+	    Serial1.println("GET /input/L87zZE13dQu1wB3e3aoeH73rM4ZR?private_key=QQNPMndZ5rIyLaNWNZ4WuLGdY3Z0&kaand=green&phonenumber=12345&productname=Leeee&productprice=4999 HTTP/1.0\r\n\r\n");
+	    //debugging for now
+	//check whether you got success
 		if(checkResponse(SUCCESS,sizeof(SUCCESS),15000)){
 		   Serial.println("Data sent to server"); //log the info
 		}else{
@@ -340,7 +368,7 @@ void sendData(){
 		}
 		//get rid on any more Rx data and clear the buffer
 		clearESPBuffer();
-*/
+
 		delay(15000);
 		printESPBuffer(); //print all what you are getting
 
@@ -369,7 +397,7 @@ boolean connectESP(){
 	//get rid on any more Rx data and clear the buffer
     clearESPBuffer();
 	Serial.println("Setting TCP connection");  //log the info
-	Serial1.print("AT+CIPSTART=\"TCP\",\"192.168.1.102\",8080\r\n");   //set TCP connection to the server.
+	Serial1.print("AT+CIPSTART=\"TCP\",\"10.77.133.44\",8080\r\n");   //set TCP connection to the server.
     //check whether you got OK
 	if(checkResponse(OK,sizeof(OK),5000)){
 	   Serial.println("TCP connection set with ESP"); //log the info
@@ -383,7 +411,9 @@ boolean connectESP(){
 	//send the no of character to send
 	Serial.println("Sending no of chars to send");   //log the info
     Serial1.print("AT+CIPSEND=");
-    Serial1.print(payloadSize);
+    Serial1.print(payloadSize);  //for debuggin
+    //int debugSize = 159;
+    //Serial1.print(debugSize);
     Serial1.print("\r\n");
     //check whether you got >
 	if(checkResponse(CARROT,sizeof(CARROT),5000)){

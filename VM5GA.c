@@ -19,6 +19,7 @@ byte signalStrength20dm[] = {0xBB, 0x00, 0xB6, 0x00, 0x02, 0x07, 0xD0, 0x8F, 0x7
 byte signalStrength26dbm[] ={0xBB, 0x00, 0xB6, 0x00, 0x02, 0x0A, 0x28, 0xEA, 0x7E };
 byte singlePollingCmd[] = {0xBB, 0x00, 0x22, 0x00, 0x00, 0x22, 0x7E};
 byte multiplePollingCmd[] = {0xBB, 0x00, 0x27, 0x00, 0x03, 0x22, 0x00, 0x28, 0x74, 0x7E }; // poll 40 times
+byte stopMultiplePollingCmd[] = {0xBB, 0x00, 0x28, 0x00, 0x00, 0x28, 0x7E};
 //String infoResponseString = "";
 String readString = "";
 char infoResponse1[] = {0xBB, 0x01, 0x03, 0x00, 0x08, 0x02, 0x4D, 0x61, 0x67, 0x69, 0x63, 0x52, 0x66, 0xA7, 0X7E};
@@ -28,6 +29,18 @@ char signalStrength20dmResponse1[] = {0xBB,	0x01,	0xB6,	0x00,	0x01,	0x00,	0xB8,	
 char tagID1Response[] ={0xBB, 0x02, 0x22, 0x00, 0x11, 0xC3, 0x30, 0x00,
 		0x34, 0x08, 0x33, 0xB2, 0xDD, 0xD9, 0x01, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x34, 0x6F, 0xE3, 0x7E };
+char stopMultiplePollingCmdResponse1[]={0xBB, 0x01,	0x28, 0x00,	0x01, 0x00,	0x2A, 0x7E};
+
+//vahiyaat jugaad
+int tag1Found =0;
+int tag2Found =0;
+int tag3Found =0;
+int tag4Found =0;
+
+
+//gloabal variable for the current tag.
+int tagNo;
+
 
 void setup() {
   // initialize both serial ports:
@@ -78,8 +91,10 @@ void loop(){
      //rest
      delay(10);
 */
-     //try multiple polling and see what happens
-     multiplePolling();
+	//going will multiple polling , because it looked better to me . Well it's 5:23 am so can't really say :P
+    //try multiple polling and see what happens
+	//keep polling untill you find a tag!!
+     while(!(tagNo =multiplePolling()));
      //clear the VM5GA buffer.
      clearVM5GABuffer();
      //rest
@@ -326,6 +341,39 @@ void setSignalStrengthVM5GA(){
 }
 
 
+/*FUNCTION NAME:
+  * stopMultiplePollingVM5GA
+  *
+  * DESCRIPTION:
+  * This function stops multiple polling of VM5GA.
+  *
+  *
+  * PARAMETERS:
+  * None.
+  *
+  * RETURN VALUES:
+  * None.
+  *
+  */
+
+void stopMultiplePollingVM5GA(){
+	 //log the info
+	 Serial.println("Stopping multiple polling");
+	 // clear VM5GA buffer first.
+	 clearVM5GABuffer();
+	 Serial2.write(stopMultiplePollingCmd, sizeof(stopMultiplePollingCmd));
+	 //check for the response.
+	 if(checkResponseVM5GA(stopMultiplePollingCmdResponse1,sizeof(stopMultiplePollingCmdResponse1),5000)){
+		Serial.println("Multiple polling stopped");
+	 }else{
+		Serial.println("Unable to stop multiple polling");
+	}
+
+}
+
+
+
+
 
 /*FUNCTION NAME:
   * singlePolling
@@ -345,7 +393,7 @@ void setSignalStrengthVM5GA(){
 void singlePolling(){
 
 	 //log the info
-	// Serial.println("Polling one single time");
+	 Serial.println("Polling one single time");
      // clear VM5GA buffer first.
 	 clearVM5GABuffer();
 	 Serial2.write(singlePollingCmd, sizeof(singlePollingCmd));
@@ -391,14 +439,14 @@ void singlePolling(){
   * None.
   *
   * RETURN VALUES:
-  * None.
-  *
+  * tagNo - When a new tag is found.
+  * 0 - if no tag found.
   */
 
-void multiplePolling(){
+int multiplePolling(){
 
 	 //log the info
-	// Serial.println("Multiple polling 40 times");
+	 Serial.println("Multiple polling 40 times");
      // clear VM5GA buffer first.
 	 clearVM5GABuffer();
 	 Serial2.write(multiplePollingCmd, sizeof(multiplePollingCmd));
@@ -417,22 +465,43 @@ void multiplePolling(){
 	 tag = readTagVM5GA();
 	 switch (tag) {
 	     case 1:
+	    	if(tag1Found ==0){  //come only once
 	        Serial.println("Tag 0x31 found ");
+	        tag1Found = 1;
+	        stopMultiplePollingVM5GA();
+	        return 1;
+	    	}
 	       break;
 	     case 2:
+	    	 if(tag2Found ==0){ //come only once
 	    	 Serial.println("Tag 0x32 found ");
+	    	 tag2Found = 1;
+	    	 stopMultiplePollingVM5GA();
+	    	 return 2;
+	    	 }
 	       break;
 	     case 3:
+	    	 if(tag3Found ==0){ //come only once
 	    	 Serial.println("Tag 0x33 found ");
+	    	 tag3Found = 1;
+	    	 stopMultiplePollingVM5GA();
+	    	 return 3;
+	    	 }
 	    	 break;
 	     case 4:
+	    	 if(tag4Found ==0){ //come only once
 	    	 Serial.println("Tag 0x34 found ");
+	    	 tag4Found =1;
+	    	 stopMultiplePollingVM5GA();
+	    	 return 4;
+	    	 }
 	    	 break;
 	     default:
 	       // Serial.println("No tag found");
 	     break;
 	   }
 	 }
+	 return 0; //nothing found
 }
 
 /*FUNCTION NAME:
@@ -465,6 +534,9 @@ void printResponseofVM5GA(){
 		   readString=""; //clears variable for new input
 		 }
 }
+
+
+
 
 
 /*FUNCTION NAME:
