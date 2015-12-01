@@ -8,7 +8,7 @@
 
 #include <ESP8266WiFi.h>
 // Include the SparkFun Phant library.
-//#include <Phant.h>
+#include <Phant.h>
 #define LED_PIN 2
 
 
@@ -121,10 +121,10 @@ int sendData(){
 	++value;
 
 	// Declare an object from the Phant library - phant
-//	Phant phant(host,streamId, privateKey);
+	Phant phant(host,streamId, privateKey);
 
 	// Add the four field/value pairs defined by our stream:
-//	phant.add("value", value);
+	phant.add("value", value);
 
 
 	Serial.print("connecting to ");
@@ -138,7 +138,7 @@ int sendData(){
 	  return 0;
 	}
 
-
+/*
 	// We now create a URI for the request
 	 String url = "/input/";
 	 url += streamId;
@@ -155,9 +155,9 @@ int sendData(){
 	               "Host: " + host + "\r\n" +
 	               "Connection: close\r\n\r\n");
 
-
+*/
 	 // If we successfully connected, print our Phant post:
-	 //client.print(phant.post());
+	 client.print(phant.post());
 
 	 delay(10);  //wait for response from server
 
