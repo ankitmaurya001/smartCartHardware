@@ -7,14 +7,28 @@
  */
 
 #include <ESP8266WiFi.h>
+// Include the SparkFun Phant library.
+//#include <Phant.h>
 #define LED_PIN 2
+
+
+//mere ghar ke liye
+/*
+const char* ssid     = "Chucha";
+const char* password = "chuchaspeaking";
 
 const char* ssid     = "PowerRangers";
 const char* password = "dhawanisgreat";
+*/
 
-const char* host = "data.sparkfun.com";
-const char* streamId   = "bGnJA4bp6pF6E4o3Z8WM";
-const char* privateKey = "VpXMvamygyu05jbxGypm";
+//for thinqubator
+const char* ssid     = "Thinqubator";
+const char* password = "C1sco12345";
+
+
+const char* host = "10.142.123.75";
+const char* streamId   = "doWk1AlVE8IrO716QEBEsVBzP4DJ";
+const char* privateKey = "GMg64QZXJ1HPkL9pZx3xH3qpYx1Q";
 
 void setup() {
   Serial.begin(115200);
@@ -23,20 +37,24 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
   //ESP is not connected so led is off.
   digitalWrite(LED_PIN, LOW);
+ // Serial.println("***********************hi*******************");
   // We start by connecting to a WiFi network , led will be blinking @2Hz while connecting.
   connectToWiFi();
   //ESP is connected to make led solid red.
   digitalWrite(LED_PIN, HIGH);
+
 }
 
 int value = 0;
 void loop(){
+
 	while(!sendData()){
 	  Serial.println("Sending data failed, trying again in 5 sec");
 	  delay(5000);
 	}
 	Serial.println("Data sent, waiting 10sec to send another data");
 	delay(10000);
+
 }
 
 
@@ -76,6 +94,7 @@ void connectToWiFi(){
 	Serial.println("IP address: ");
 	Serial.println(WiFi.localIP());
 
+
 }
 
 
@@ -100,16 +119,25 @@ int sendData(){
 	// successfully post.
 	digitalWrite(LED_PIN, HIGH);
 	++value;
+
+	// Declare an object from the Phant library - phant
+//	Phant phant(host,streamId, privateKey);
+
+	// Add the four field/value pairs defined by our stream:
+//	phant.add("value", value);
+
+
 	Serial.print("connecting to ");
 	Serial.println(host);
 
 	// Use WiFiClient class to create TCP connections
 	WiFiClient client;
-	const int httpPort = 80;
+	const int httpPort = 8080;
 	if (!client.connect(host, httpPort)) {
 	  Serial.println("connection failed");
 	  return 0;
 	}
+
 
 	// We now create a URI for the request
 	 String url = "/input/";
@@ -126,19 +154,33 @@ int sendData(){
 	 client.print(String("GET ") + url + " HTTP/1.1\r\n" +
 	               "Host: " + host + "\r\n" +
 	               "Connection: close\r\n\r\n");
-	 delay(10);
+
+
+	 // If we successfully connected, print our Phant post:
+	 //client.print(phant.post());
+
+	 delay(10);  //wait for response from server
 
 	 // Read all the lines of the reply from server and print them to Serial
 	 while(client.available()){
 	   String line = client.readStringUntil('\r');
 	   Serial.print(line);
+	   //look for OK response in HTTP/1.1 200 OK
+	   /*not working properly commenting out
+	   if(line.substring(13) == "OK"){
+		   Serial.println("Data sent successfully");
+		   dataSentSuccessfully = 1;
+		   value --;
+	   }
+	   hoping data will always be sent properly.
+	   */
 	 }
 
 	 Serial.println();
 	 Serial.println("closing connection");
+
 	 // Before we exit, turn the LED off.
 	 digitalWrite(LED_PIN, LOW);
 
 	 return 1; // Return success
-
 }
