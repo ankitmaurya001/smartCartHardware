@@ -27,8 +27,11 @@ const char* password = "C1sco12345";
 
 
 const char* host = "10.142.123.75";
-const char* streamId   = "doWk1AlVE8IrO716QEBEsVBzP4DJ";
-const char* privateKey = "GMg64QZXJ1HPkL9pZx3xH3qpYx1Q";
+const char* streamId   = "qdLPqJ1QmKHAG136Z1Alhle2bg3J";   //the public key
+const char* privateKey = "g9qr05yJzMcqn18Yr1qgSRdkJn60";
+
+//delete key just for reference
+//"qPa8RzZwqBFgRJ9rkJgaC4qLel9D"
 
 void setup() {
   Serial.begin(115200);
@@ -124,7 +127,10 @@ int sendData(){
 	Phant phant(host,streamId, privateKey);
 
 	// Add the four field/value pairs defined by our stream:
-	phant.add("value", value);
+	phant.add("kaand","green");
+	phant.add("phonenumber","7829834215");
+	phant.add("productname","milk");
+	phant.add("productprice","1299");
 
 
 	Serial.print("connecting to ");
